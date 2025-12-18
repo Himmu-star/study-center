@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Command Center | SSC & RRB JE Civil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #2563eb;
+            --bg-light: #f8fafc;
+            --card-light: #ffffff;
+            --text-light: #1e293b;
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --text-dark: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark .glass {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        /* Focus Mode Styles */
+        .exam-mode {
+            background: #000 !important;
+            color: #fff !important;
+        }
+        .exam-mode nav, .exam-mode .sidebar {
+            display: none !important;
+        }
+
+        .streak-fire {
+            animation: flicker 1.5s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { transform: scale(1); filter: drop-shadow(0 0 2px #f97316); }
+            100% { transform: scale(1.1); filter: drop-shadow(0 0 10px #ea580c); }
+        }
+
+        .page-transition {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen">
+
+    <!-- LOGIN OVERLAY -->
+    <div id="login-page" class="fixed inset-0 z-[100] bg-slate-900 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-700">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30">
+                    <i class="fas fa-shield-halved text-white text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold">Aspirant Command Center</h1>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mt-2">Enter credentials to access your routine</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-1">Username</label>
+                    <input type="text" id="username" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-1">Passkey</label>
+                    <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                </div>
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-600/20">
+                    Initialize Session
+                </button>
+            </form>
+            <p class="text-center mt-6 text-xs text-slate-500">Note: Data is stored strictly on this browser.</p>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER (HIDDEN UNTIL LOGIN) -->
+    <div id="app-shell" class="hidden flex flex-col md:flex-row min-h-screen">
+        
+        <!-- SIDEBAR / NAVIGATION -->
+        <aside class="w-full md:w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col sticky top-0 h-screen z-40">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+                        <i class="fas fa-bolt text-sm"></i>
+                    </div>
+                    <span class="font-bold text-lg tracking-tight">SSC COMMAND</span>
+                </div>
+                
+                <nav class="space-y-1">
+                    <button onclick="navigate('dashboard')" class="nav-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-blue-600 bg-blue-50 dark:bg-blue-900/20">
+                        <i class="fas fa-house"></i> Dashboard
+                    </button>
+                    <button onclick="navigate('routine')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i class="fas fa-calendar-alt"></i> Routine
+                    </button>
+                    <button onclick="navigate('focus')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i class="fas fa-clock"></i> Focus Timer
+                    </button>
+                    <button onclick="navigate('analytics')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i class="fas fa-chart-line"></i> Progress
+                    </button>
+                    <button onclick="navigate('settings')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
+                </nav>
+            </div>
+
+            <div class="mt-auto p-6 border-t border-slate-200 dark:border-slate-800">
+                <div class="bg-gradient-to-br from-orange-500 to-red-600 p-4 rounded-2xl text-white">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-bold uppercase opacity-80">Current Streak</span>
+                        <i class="fas fa-fire streak-fire"></i>
+                    </div>
+                    <div class="text-3xl font-black" id="sidebar-streak-count">0</div>
+                    <p class="text-[10px] mt-1 opacity-90">Don't break the chain!</p>
+                </div>
+                <button onclick="logout()" class="w-full mt-4 flex items-center justify-center gap-2 text-xs font-semibold text-red-500 hover:text-red-600">
+                    <i class="fas fa-power-off"></i> LOGOUT SESSION
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTENT AREA -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8">
+            
+            <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold" id="page-title">Dashboard</h2>
+                    <p class="text-slate-500 text-sm" id="dynamic-quote">"Discipline is doing what needs to be done..."</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="exam-mode-toggle" onclick="toggleExamMode()" class="px-4 py-2 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-lg text-sm font-bold flex items-center gap-2">
+                        <i class="fas fa-ghost"></i> EXAM MODE
+                    </button>
+                </div>
+            </header>
+
+            <!-- PAGES CONTAINER -->
+            <div id="pages">
+                
+                <!-- DASHBOARD PAGE -->
+                <section id="page-dashboard" class="page-transition space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Ticker Card -->
+                        <div class="md:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold flex items-center gap-2">
+                                    <i class="fas fa-crosshairs text-red-500"></i> Exam Target
+                                </h3>
+                                <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs font-bold" id="countdown-days">0 Days Left</span>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-300 dark:border-slate-700">
+                                <div>
+                                    <p class="text-xs text-slate-500 uppercase font-bold tracking-widest">Today's Priority</p>
+                                    <p class="text-lg font-bold" id="dash-today-target">No target set for today</p>
+                                </div>
+                                <input type="checkbox" id="target-check" onchange="completeTarget()" class="w-8 h-8 rounded-lg border-2 border-slate-300">
+                            </div>
+                        </div>
+
+                        <!-- Stats Card -->
+                        <div class="bg-blue-600 p-6 rounded-2xl text-white flex flex-col justify-between">
+                            <h3 class="font-bold opacity-80">Daily Focus</h3>
+                            <div class="my-4">
+                                <div class="text-4xl font-black" id="dash-sessions">0</div>
+                                <p class="text-sm opacity-80 text-blue-100">Pomodoro Sessions Today</p>
+                            </div>
+                            <div class="w-full bg-blue-400/30 rounded-full h-1.5">
+                                <div class="bg-white h-1.5 rounded-full" id="session-progress-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Routine Preview -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                            <h3 class="font-bold mb-4 flex items-center gap-2"><i class="fas fa-list-check text-blue-500"></i> Next in Routine</h3>
+                            <div id="dash-routine-list" class="space-y-3">
+                                <!-- Routine items injected here -->
+                                <p class="text-slate-400 text-sm italic">Nothing scheduled yet.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                            <h3 class="font-bold mb-4 flex items-center gap-2"><i class="fas fa-trophy text-yellow-500"></i> Leaderboard Mindset</h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm">Civil (Technical)</span>
+                                    <span class="text-xs font-bold" id="civil-perc">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                                    <div id="civil-bar" class="bg-green-500 h-full transition-all" style="width: 0%"></div>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm">Non-Tech (GK/Math)</span>
+                                    <span class="text-xs font-bold" id="nontech-perc">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                                    <div id="nontech-bar" class="bg-blue-500 h-full transition-all" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ROUTINE BUILDER PAGE -->
+                <section id="page-routine" class="page-transition hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <h3 class="font-bold mb-6">Create Daily Master Routine</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            <input type="time" id="routine-start" class="px-4 py-2 rounded-lg border dark:bg-slate-800 dark:border-slate-700">
+                            <input type="time" id="routine-end" class="px-4 py-2 rounded-lg border dark:bg-slate-800 dark:border-slate-700">
+                            <input type="text" id="routine-subject" placeholder="Subject (e.g. Civil Engineering)" class="px-4 py-2 rounded-lg border dark:bg-slate-800 dark:border-slate-700">
+                            <button onclick="addRoutineItem()" class="bg-blue-600 text-white font-bold rounded-lg py-2 hover:bg-blue-700 transition-all">Add Slot</button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="text-xs uppercase text-slate-500 border-b dark:border-slate-800">
+                                        <th class="py-3 px-2">Time</th>
+                                        <th class="py-3 px-2">Subject</th>
+                                        <th class="py-3 px-2">Status</th>
+                                        <th class="py-3 px-2">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="routine-table-body">
+                                    <!-- Items -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FOCUS TIMER PAGE -->
+                <section id="page-focus" class="page-transition hidden flex flex-col items-center justify-center min-h-[60vh]">
+                    <div class="text-center space-y-8 w-full max-w-md">
+                        <div id="timer-circle" class="relative w-64 h-64 mx-auto flex items-center justify-center">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="128" cy="128" r="120" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-200 dark:text-slate-800" />
+                                <circle id="timer-progress" cx="128" cy="128" r="120" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="753.98" stroke-dashoffset="0" class="text-blue-600 transition-all duration-1000" />
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span id="timer-display" class="text-6xl font-black">25:00</span>
+                                <span id="timer-label" class="text-xs uppercase font-bold tracking-widest text-slate-500 mt-2">Focus Session</span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 justify-center">
+                            <button onclick="toggleTimer()" id="timer-main-btn" class="w-16 h-16 bg-blue-600 rounded-full text-white text-2xl flex items-center justify-center shadow-xl shadow-blue-500/20">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button onclick="resetTimer()" class="w-16 h-16 bg-slate-200 dark:bg-slate-800 rounded-full text-slate-600 dark:text-slate-300 text-2xl flex items-center justify-center">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border dark:border-slate-800">
+                                <p class="text-[10px] uppercase font-bold text-slate-400">Total Today</p>
+                                <p class="text-xl font-bold" id="focus-total-time">0m</p>
+                            </div>
+                            <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border dark:border-slate-800">
+                                <p class="text-[10px] uppercase font-bold text-slate-400">Target</p>
+                                <p class="text-xl font-bold">10 Sessions</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ANALYTICS PAGE -->
+                <section id="page-analytics" class="page-transition hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <h3 class="font-bold mb-4">Preparation Velocity (Last 7 Days)</h3>
+                        <div class="flex items-end gap-2 h-48 mt-8" id="activity-chart">
+                            <!-- Bars injected here -->
+                        </div>
+                        <div class="flex justify-between mt-4 text-[10px] uppercase font-bold text-slate-400">
+                            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                            <h3 class="font-bold mb-4">Subject Mastery</h3>
+                            <div class="space-y-6" id="mastery-list">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                            <h3 class="font-bold mb-4">Daily Reports</h3>
+                            <div class="space-y-3" id="reports-list">
+                                <!-- List of reports -->
+                                <p class="text-slate-400 text-sm">No reports submitted yet.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SETTINGS PAGE -->
+                <section id="page-settings" class="page-transition hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <h3 class="font-bold mb-6">User Preferences</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Dark Theme</p>
+                                    <p class="text-xs text-slate-500">Enable high-contrast dark mode</p>
+                                </div>
+                                <button onclick="toggleTheme()" class="w-12 h-6 bg-slate-300 dark:bg-blue-600 rounded-full relative transition-all">
+                                    <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-all dark:left-7"></div>
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Exam Date</p>
+                                    <p class="text-xs text-slate-500">Target date for countdown</p>
+                                </div>
+                                <input type="date" id="exam-date-input" onchange="saveExamDate(this.value)" class="px-3 py-1.5 rounded-lg border dark:bg-slate-800 dark:border-slate-700">
+                            </div>
+                            <div class="pt-6 border-t dark:border-slate-800">
+                                <button onclick="resetAllData()" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg text-sm font-bold hover:bg-red-200">RESET ALL PROGRESS DATA</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- SELF REPORT POPUP -->
+    <div id="report-modal" class="fixed inset-0 z-[110] bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-lg p-8 rounded-3xl shadow-2xl space-y-6">
+            <h2 class="text-2xl font-bold text-center">EOD Self-Reflection</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">How do you rate your focus today? (1-5)</label>
+                    <div class="flex justify-between gap-2">
+                        <button onclick="setReportRating(1)" class="rating-btn flex-1 py-3 rounded-xl border dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">1</button>
+                        <button onclick="setReportRating(2)" class="rating-btn flex-1 py-3 rounded-xl border dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">2</button>
+                        <button onclick="setReportRating(3)" class="rating-btn flex-1 py-3 rounded-xl border dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">3</button>
+                        <button onclick="setReportRating(4)" class="rating-btn flex-1 py-3 rounded-xl border dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">4</button>
+                        <button onclick="setReportRating(5)" class="rating-btn flex-1 py-3 rounded-xl border dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">5</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">What was your biggest distraction?</label>
+                    <input type="text" id="report-weakness" class="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Plan for Tomorrow</label>
+                    <textarea id="report-plan" class="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none outline-none resize-none" rows="3"></textarea>
+                </div>
+                <button onclick="submitReport()" class="w-full py-4 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-600/20">LOG REPORT & FINISH DAY</button>
+                <button onclick="closeReportModal()" class="w-full text-sm text-slate-500">I'm not done yet</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STATE ---
+        let state = {
+            user: null,
+            routine: [],
+            streak: 0,
+            lastActive: null,
+            sessionsToday: 0,
+            examDate: null,
+            reports: [],
+            subjectProgress: {
+                civil: 0,
+                nontech: 0
+            },
+            history: {} // {date: sessionCount}
+        };
+
+        const quotes = [
+            "The hard days are what make you stronger.",
+            "An hour of focus is worth a day of distraction.",
+            "Success is the sum of small efforts repeated daily.",
+            "Your future self will thank you for today's grind.",
+            "Consistency beats talent when talent doesn't work hard."
+        ];
+
+        // --- AUTH SYSTEM ---
+        const loginForm = document.getElementById('login-form');
+        const loginPage = document.getElementById('login-page');
+        const appShell = document.getElementById('app-shell');
+
+        loginForm.onsubmit = (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            state.user = user;
+            saveState();
+            initializeUI();
+            loginPage.classList.add('hidden');
+            appShell.classList.remove('hidden');
+        };
+
+        function logout() {
+            state.user = null;
+            saveState();
+            location.reload();
+        }
+
+        // --- NAVIGATION ---
+        function navigate(pageId) {
+            // Update Title
+            const titles = {
+                dashboard: 'Dashboard',
+                routine: 'Daily Routine',
+                focus: 'Focus Timer',
+                analytics: 'Performance Analytics',
+                settings: 'System Settings'
+            };
+            document.getElementById('page-title').textContent = titles[pageId];
+            
+            // Toggle Pages
+            document.querySelectorAll('#pages > section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+
+            // Update Nav Buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-blue-600', 'bg-blue-50', 'dark:bg-blue-900/20');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400');
+            });
+            event.currentTarget.classList.add('text-blue-600', 'bg-blue-50', 'dark:bg-blue-900/20');
+            
+            if(pageId === 'dashboard') renderDashboard();
+            if(pageId === 'routine') renderRoutine();
+            if(pageId === 'analytics') renderAnalytics();
+        }
+
+        // --- CORE LOGIC ---
+        function saveState() {
+            localStorage.setItem('study_command_state', JSON.stringify(state));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('study_command_state');
+            if (saved) {
+                state = JSON.parse(saved);
+                // Check if it's a new day
+                const today = new Date().toDateString();
+                if (state.lastActive !== today) {
+                    checkStreak();
+                    state.sessionsToday = 0;
+                    state.lastActive = today;
+                    saveState();
+                }
+            }
+        }
+
+        function checkStreak() {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yDateStr = yesterday.toDateString();
+            
+            if (state.lastActive === yDateStr) {
+                // Streak maintained if last active was yesterday
+                // Increment only if targets were met (logic can be expanded)
+            } else if (state.lastActive !== new Date().toDateString()) {
+                // Streak broken if missed more than a day
+                // state.streak = 0; 
+            }
+        }
+
+        // --- DASHBOARD ---
+        function renderDashboard() {
+            document.getElementById('dash-sessions').textContent = state.sessionsToday;
+            document.getElementById('session-progress-bar').style.width = `${Math.min(state.sessionsToday * 10, 100)}%`;
+            document.getElementById('sidebar-streak-count').textContent = state.streak;
+            
+            // Countdown
+            if (state.examDate) {
+                const diff = new Date(state.examDate) - new Date();
+                const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                document.getElementById('countdown-days').textContent = days > 0 ? `${days} Days Left` : 'Exam Day!';
+            }
+
+            // Routine Preview
+            const list = document.getElementById('dash-routine-list');
+            list.innerHTML = '';
+            const nextItems = state.routine.slice(0, 3);
+            if (nextItems.length === 0) {
+                list.innerHTML = '<p class="text-slate-400 text-sm">No items in your routine yet.</p>';
+            } else {
+                nextItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = "flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800";
+                    div.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-bold text-blue-500">${item.start}</span>
+                            <span class="text-sm font-semibold">${item.subject}</span>
+                        </div>
+                        <i class="far fa-circle text-slate-300"></i>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+
+            // Progress Bars
+            document.getElementById('civil-perc').textContent = state.subjectProgress.civil + '%';
+            document.getElementById('civil-bar').style.width = state.subjectProgress.civil + '%';
+            document.getElementById('nontech-perc').textContent = state.subjectProgress.nontech + '%';
+            document.getElementById('nontech-bar').style.width = state.subjectProgress.nontech + '%';
+
+            // Random Quote
+            document.getElementById('dynamic-quote').textContent = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
+        }
+
+        function completeTarget() {
+            const checkbox = document.getElementById('target-check');
+            if (checkbox.checked) {
+                state.streak++;
+                state.subjectProgress.civil = Math.min(state.subjectProgress.civil + 2, 100);
+                state.subjectProgress.nontech = Math.min(state.subjectProgress.nontech + 1, 100);
+                saveState();
+                renderDashboard();
+                confettiEffect();
+            }
+        }
+
+        function confettiEffect() {
+            // Simple visual feedback
+            const btn = document.getElementById('target-check');
+            btn.parentElement.classList.add('bg-green-50', 'dark:bg-green-900/20', 'border-green-500');
+            setTimeout(() => {
+                alert("Target Cleared! Streak +1 🔥");
+            }, 100);
+        }
+
+        // --- ROUTINE ---
+        function addRoutineItem() {
+            const start = document.getElementById('routine-start').value;
+            const end = document.getElementById('routine-end').value;
+            const sub = document.getElementById('routine-subject').value;
+
+            if (!start || !sub) return;
+
+            state.routine.push({ start, end, subject: sub, id: Date.now() });
+            state.routine.sort((a,b) => a.start.localeCompare(b.start));
+            saveState();
+            renderRoutine();
+        }
+
+        function renderRoutine() {
+            const tbody = document.getElementById('routine-table-body');
+            tbody.innerHTML = '';
+            state.routine.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b dark:border-slate-800 text-sm";
+                tr.innerHTML = `
+                    <td class="py-4 px-2 font-medium">${item.start} - ${item.end}</td>
+                    <td class="py-4 px-2">${item.subject}</td>
+                    <td class="py-4 px-2"><span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-[10px] font-bold">PLANNED</span></td>
+                    <td class="py-4 px-2">
+                        <button onclick="deleteRoutine(${item.id})" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteRoutine(id) {
+            state.routine = state.routine.filter(i => i.id !== id);
+            saveState();
+            renderRoutine();
+        }
+
+        // --- FOCUS TIMER ---
+        let timerInterval;
+        let timeLeft = 25 * 60;
+        let isRunning = false;
+        let totalSecondsToday = 0;
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            document.getElementById('timer-display').textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+            
+            // Progress circle
+            const circle = document.getElementById('timer-progress');
+            const total = 25 * 60;
+            const offset = 753.98 - (753.98 * (timeLeft / total));
+            circle.style.strokeDashoffset = offset;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('timer-main-btn');
+            if (isRunning) {
+                clearInterval(timerInterval);
+                btn.innerHTML = '<i class="fas fa-play"></i>';
+            } else {
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    totalSecondsToday++;
+                    updateTimerDisplay();
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        sessionComplete();
+                    }
+                }, 1000);
+                btn.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 25 * 60;
+            isRunning = false;
+            document.getElementById('timer-main-btn').innerHTML = '<i class="fas fa-play"></i>';
+            updateTimerDisplay();
+        }
+
+        function sessionComplete() {
+            state.sessionsToday++;
+            const today = new Date().toDateString();
+            state.history[today] = (state.history[today] || 0) + 1;
+            saveState();
+            
+            // Audio cue (optional)
+            alert("Focus session complete! Take a 5 min break.");
+            resetTimer();
+            document.getElementById('focus-total-time').textContent = `${state.sessionsToday * 25}m`;
+        }
+
+        // --- ANALYTICS ---
+        function renderAnalytics() {
+            const chart = document.getElementById('activity-chart');
+            chart.innerHTML = '';
+            
+            // Get last 7 days keys
+            for(let i=6; i>=0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const count = state.history[d.toDateString()] || 0;
+                const height = Math.min(count * 20, 100); // 5 sessions = 100% height
+                
+                const bar = document.createElement('div');
+                bar.className = "flex-1 bg-blue-500 rounded-t-lg transition-all duration-1000";
+                bar.style.height = `${height}%`;
+                bar.title = `${count} sessions on ${d.toDateString()}`;
+                chart.appendChild(bar);
+            }
+
+            const rList = document.getElementById('reports-list');
+            rList.innerHTML = state.reports.length ? '' : '<p class="text-slate-400 text-sm">No reports submitted yet.</p>';
+            state.reports.slice(-5).reverse().forEach(r => {
+                const div = document.createElement('div');
+                div.className = "p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-800 text-xs";
+                div.innerHTML = `<strong>${r.date}:</strong> Focus ${r.rating}/5. Plan: ${r.plan}`;
+                rList.appendChild(div);
+            });
+        }
+
+        // --- EXAM MODE ---
+        let isExamMode = false;
+        function toggleExamMode() {
+            isExamMode = !isExamMode;
+            document.body.classList.toggle('exam-mode', isExamMode);
+            document.body.classList.toggle('dark', isExamMode); // Force dark in exam mode
+            
+            if (isExamMode) {
+                navigate('focus');
+                document.getElementById('exam-mode-toggle').innerHTML = '<i class="fas fa-times"></i> EXIT MODE';
+            } else {
+                navigate('dashboard');
+                document.getElementById('exam-mode-toggle').innerHTML = '<i class="fas fa-ghost"></i> EXAM MODE';
+            }
+        }
+
+        // --- SETTINGS ---
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+        }
+
+        function saveExamDate(val) {
+            state.examDate = val;
+            saveState();
+            renderDashboard();
+        }
+
+        function resetAllData() {
+            if (confirm("This will permanently erase all your progress. Continue?")) {
+                localStorage.removeItem('study_command_state');
+                location.reload();
+            }
+        }
+
+        // --- SELF REPORT MODAL ---
+        let currentRating = 0;
+        function showReportModal() {
+            document.getElementById('report-modal').classList.remove('hidden');
+        }
+
+        function closeReportModal() {
+            document.getElementById('report-modal').classList.add('hidden');
+        }
+
+        function setReportRating(n) {
+            currentRating = n;
+            document.querySelectorAll('.rating-btn').forEach((btn, idx) => {
+                if (idx + 1 === n) btn.classList.add('bg-blue-600', 'text-white');
+                else btn.classList.remove('bg-blue-600', 'text-white');
+            });
+        }
+
+        function submitReport() {
+            const report = {
+                date: new Date().toLocaleDateString(),
+                rating: currentRating,
+                weakness: document.getElementById('report-weakness').value,
+                plan: document.getElementById('report-plan').value
+            };
+            state.reports.push(report);
+            state.lastActive = new Date().toDateString();
+            saveState();
+            closeReportModal();
+            alert("Report saved. Get some rest, Commander!");
+        }
+
+        // --- INIT ---
+        function initializeUI() {
+            loadState();
+            if (state.user) {
+                loginPage.classList.add('hidden');
+                appShell.classList.remove('hidden');
+                renderDashboard();
+                
+                // Show report modal if end of day (e.g. after 9 PM)
+                const hour = new Date().getHours();
+                if (hour >= 21 && !state.reports.find(r => r.date === new Date().toLocaleDateString())) {
+                    setTimeout(showReportModal, 2000);
+                }
+            }
+        }
+
+        window.onload = initializeUI;
+
+    </script>
+</body>
+</html>
