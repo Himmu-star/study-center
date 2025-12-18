@@ -32,86 +32,95 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .checkbox-custom:checked + label {
-            text-decoration: line-through;
-            opacity: 0.5;
-        }
         .timer-glow {
             text-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
         }
+        /* Custom scrollbar for log list */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen">
 
     <!-- Landing / Login Page -->
     <div id="landing-page" class="active-section container mx-auto px-4 min-h-screen flex flex-col items-center justify-center text-center">
-        <h1 class="text-5xl font-light mb-4 text-gray-800">FocusPath</h1>
-        <p class="text-gray-500 mb-8 italic font-serif">"Deep work is the superpower of the 21st century."</p>
+        <h1 class="text-5xl font-light mb-4 text-gray-800 tracking-tight">FocusPath</h1>
+        <p class="text-gray-500 mb-8 italic font-serif">"Concentrate all your thoughts upon the work at hand."</p>
         
         <div class="glass-card p-8 w-full max-w-md">
-            <label class="block text-left text-sm font-medium text-gray-700 mb-2">Enter your name to begin</label>
+            <label class="block text-left text-sm font-medium text-gray-700 mb-2 font-semibold">Study Profile Name</label>
             <input type="text" id="username-input" placeholder="e.g. Alex" 
                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all mb-4">
             <button onclick="login()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-medium hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
                 Enter Workspace
             </button>
         </div>
-        <p class="mt-6 text-xs text-gray-400">Data is stored locally in your browser.</p>
+        <p class="mt-6 text-xs text-gray-400">Public profile based on browser LocalStorage.</p>
     </div>
 
     <!-- Dashboard Page -->
     <div id="dashboard-page" class="hidden-section container mx-auto px-4 py-8 max-w-6xl">
         <header class="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
             <div>
-                <h2 class="text-3xl font-semibold text-gray-800">Welcome back, <span id="display-name" class="text-indigo-600"></span></h2>
-                <p id="current-date" class="text-gray-500"></p>
+                <h2 class="text-3xl font-semibold text-gray-800">Welcome, <span id="display-name" class="text-indigo-600"></span></h2>
+                <p id="current-date" class="text-gray-500 font-medium"></p>
             </div>
-            <div class="flex gap-4">
-                <button onclick="logout()" class="text-sm text-gray-500 hover:text-red-500 transition-colors">Switch Profile</button>
-                <div id="public-badge" class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Public View Active</div>
+            <div class="flex items-center gap-6">
+                <div id="public-badge" class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold uppercase tracking-wider">Live Tracking</div>
+                <button onclick="logout()" class="text-sm font-semibold text-gray-400 hover:text-red-500 transition-colors">Log Out</button>
             </div>
         </header>
 
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <div class="glass-card p-6 text-center">
-                <p class="text-sm text-gray-500 uppercase tracking-wider mb-1">Today</p>
-                <h3 class="text-4xl font-bold text-indigo-600"><span id="hours-today">0</span><span class="text-lg ml-1 font-normal">hrs</span></h3>
+                <p class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-2">Today's Focus</p>
+                <h3 class="text-4xl font-bold text-gray-800"><span id="hours-today">0</span><span class="text-lg ml-1 font-normal text-gray-400">hrs</span></h3>
             </div>
-            <div class="glass-card p-6 text-center border-indigo-100 bg-indigo-50/30">
-                <p class="text-sm text-gray-500 uppercase tracking-wider mb-1">Weekly Average</p>
-                <h3 class="text-4xl font-bold text-indigo-600"><span id="hours-week">0</span><span class="text-lg ml-1 font-normal">hrs</span></h3>
+            <div class="glass-card p-6 text-center bg-indigo-600 border-none">
+                <p class="text-xs text-indigo-200 uppercase tracking-widest font-bold mb-2">Weekly Average</p>
+                <h3 class="text-4xl font-bold text-white"><span id="hours-week">0</span><span class="text-lg ml-1 font-normal text-indigo-200">hrs</span></h3>
             </div>
             <div class="glass-card p-6 text-center">
-                <p class="text-sm text-gray-500 uppercase tracking-wider mb-1">Total Career</p>
-                <h3 class="text-4xl font-bold text-indigo-600"><span id="hours-total">0</span><span class="text-lg ml-1 font-normal">hrs</span></h3>
+                <p class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-2">Total Career</p>
+                <h3 class="text-4xl font-bold text-gray-800"><span id="hours-total">0</span><span class="text-lg ml-1 font-normal text-gray-400">hrs</span></h3>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column: Routine & Logging -->
+            <!-- Left Column: Manual Logging & History -->
             <div class="lg:col-span-2 space-y-8">
-                <!-- Daily Routine -->
+                <!-- Log Entry -->
                 <section class="glass-card p-8">
-                    <h4 class="text-xl font-semibold mb-6 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                        Daily Routine
+                    <h4 class="text-xl font-semibold mb-6 flex items-center text-gray-800">
+                        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        Add Study Session
                     </h4>
-                    <div id="routine-list" class="space-y-4">
-                        <!-- Tasks will be injected here -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="text-[10px] uppercase font-bold text-gray-400 mb-1 block">Subject / Topic</label>
+                            <input type="text" id="study-subject" placeholder="e.g. Mathematics" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="text-[10px] uppercase font-bold text-gray-400 mb-1 block">Hours</label>
+                            <input type="number" id="study-hours" placeholder="0.0" step="0.1" min="0" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="addManualStudy()" class="w-full bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-black transition-all font-semibold shadow-md">Add Entry</button>
+                        </div>
                     </div>
                 </section>
 
-                <!-- Extra Study Entry -->
+                <!-- History List -->
                 <section class="glass-card p-8">
-                    <h4 class="text-xl font-semibold mb-6 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                        Add Manual Study Session
+                    <h4 class="text-xl font-semibold mb-6 flex items-center text-gray-800">
+                        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Study History
                     </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input type="text" id="study-subject" placeholder="Subject (e.g. Physics)" class="px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <input type="number" id="study-hours" placeholder="Hours" step="0.1" class="px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <button onclick="addManualStudy()" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-black transition-all">Log Session</button>
+                    <div id="history-list" class="space-y-3 max-h-[400px] overflow-y-auto custom-scroll pr-2">
+                        <!-- Entries injected here -->
+                        <p class="text-gray-400 text-center py-8 italic">No sessions logged yet.</p>
                     </div>
                 </section>
             </div>
@@ -124,37 +133,43 @@
                     <div id="exam-config" class="space-y-3 mb-4 text-gray-800">
                         <input type="text" id="exam-name" placeholder="Exam Name" class="w-full px-3 py-2 rounded-lg text-sm outline-none">
                         <input type="date" id="exam-date" class="w-full px-3 py-2 rounded-lg text-sm outline-none">
-                        <button onclick="saveExam()" class="w-full bg-white text-indigo-600 py-2 rounded-lg font-semibold text-sm">Set Goal</button>
+                        <button onclick="saveExam()" class="w-full bg-white text-indigo-600 py-2 rounded-lg font-bold text-sm hover:bg-indigo-50 transition-colors shadow-lg">Set Target</button>
                     </div>
                     <div id="exam-display" class="hidden text-center">
                         <p id="display-exam-name" class="text-xl font-bold mb-1"></p>
-                        <p class="text-4xl font-black mb-2"><span id="days-left">0</span> Days</p>
-                        <p class="text-xs opacity-70">Daily Target: <span id="daily-target">--</span> hrs</p>
-                        <button onclick="resetExam()" class="mt-4 text-[10px] uppercase tracking-widest opacity-50 hover:opacity-100">Change Exam</button>
+                        <p class="text-5xl font-black mb-2"><span id="days-left">0</span> <span class="text-lg font-medium opacity-70">Days</span></p>
+                        <p class="text-xs opacity-70">Recommended Daily: <span id="daily-target" class="font-bold">--</span> hrs</p>
+                        <button onclick="resetExam()" class="mt-6 text-[10px] uppercase tracking-widest font-bold opacity-60 hover:opacity-100 transition-opacity">Reset Goal</button>
                     </div>
                 </section>
 
                 <!-- Focus Timer -->
                 <section class="glass-card p-8 text-center">
-                    <h4 class="text-lg font-semibold mb-6">Focus Timer</h4>
-                    <div id="timer-display" class="text-5xl font-mono mb-6 timer-glow tracking-tighter">25:00</div>
+                    <h4 class="text-lg font-semibold mb-6 text-gray-800">Custom Focus Timer</h4>
+                    
+                    <div id="timer-setup" class="flex items-center justify-center gap-2 mb-6">
+                        <input type="number" id="timer-min" placeholder="Min" value="25" min="0" class="w-20 px-3 py-2 text-center rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <span class="font-bold text-gray-300">:</span>
+                        <input type="number" id="timer-sec" placeholder="Sec" value="00" min="0" max="59" class="w-20 px-3 py-2 text-center rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+
+                    <div id="timer-display" class="text-5xl font-mono mb-6 timer-glow tracking-tighter text-indigo-600 font-bold">25:00</div>
                     
                     <div class="flex justify-center gap-4 mb-8">
-                        <button id="timer-btn" onclick="toggleTimer()" class="w-12 h-12 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-full hover:bg-indigo-200 transition-all">
-                            <svg id="timer-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                        <button id="timer-btn" onclick="toggleTimer()" class="w-14 h-14 flex items-center justify-center bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
+                            <svg id="timer-icon" class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
                         </button>
-                        <button onclick="resetTimer()" class="w-12 h-12 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition-all">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path></svg>
+                        <button onclick="resetTimer()" class="w-14 h-14 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition-all shadow-sm">
+                            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path></svg>
                         </button>
                     </div>
                     
                     <div class="text-left space-y-4">
-                        <label class="text-xs text-gray-400 block uppercase">Focus Music</label>
+                        <label class="text-[10px] text-gray-400 block uppercase font-bold tracking-widest">Ambient Focus</label>
                         <div class="flex flex-wrap gap-2">
-                            <button onclick="playMusic('lofi')" class="music-pill px-3 py-1 rounded-full bg-gray-50 text-xs border border-gray-100 hover:border-indigo-300">Lofi</button>
-                            <button onclick="playMusic('rain')" class="music-pill px-3 py-1 rounded-full bg-gray-50 text-xs border border-gray-100 hover:border-indigo-300">Rain</button>
-                            <button onclick="playMusic('waves')" class="music-pill px-3 py-1 rounded-full bg-gray-50 text-xs border border-gray-100 hover:border-indigo-300">Waves</button>
-                            <button onclick="stopMusic()" class="px-3 py-1 rounded-full bg-red-50 text-red-500 text-xs border border-red-100">Mute</button>
+                            <button onclick="playMusic('lofi')" class="music-pill px-3 py-2 rounded-lg bg-gray-50 text-[10px] font-bold uppercase border border-gray-100 hover:border-indigo-300 hover:text-indigo-600 transition-all">Lofi Beats</button>
+                            <button onclick="playMusic('rain')" class="music-pill px-3 py-2 rounded-lg bg-gray-50 text-[10px] font-bold uppercase border border-gray-100 hover:border-indigo-300 hover:text-indigo-600 transition-all">Rainfall</button>
+                            <button onclick="stopMusic()" class="px-3 py-2 rounded-lg bg-red-50 text-red-500 text-[10px] font-bold uppercase border border-red-100">Silence</button>
                         </div>
                     </div>
                 </section>
@@ -162,29 +177,21 @@
         </div>
     </div>
 
-    <!-- Audio Elements -->
+    <!-- Audio Player -->
     <audio id="audio-player" loop></audio>
 
     <script>
-        // --- State Management ---
+        // --- State ---
         let currentUser = null;
         let userData = {
-            routine: [
-                { id: 1, task: "Deep Morning Session", hours: 2, completed: false, lastReset: "" },
-                { id: 2, task: "Logic/Math Practice", hours: 1.5, completed: false, lastReset: "" },
-                { id: 3, task: "Reading & Research", hours: 1, completed: false, lastReset: "" },
-                { id: 4, task: "Evening Revision", hours: 1, completed: false, lastReset: "" }
-            ],
-            logs: [], // { date: "2023-10-10", hours: 2, subject: "Math" }
-            exam: { name: "", date: "", target: 0 }
+            logs: [], // { date: "YYYY-MM-DD", hours: 0, subject: "Math", id: timestamp }
+            exam: { name: "", date: "" }
         };
 
-        // --- Auth Logic ---
+        // --- Init & Auth ---
         window.onload = () => {
             const hash = window.location.hash.substring(1);
-            if (hash) {
-                loadProfile(hash);
-            }
+            if (hash) loadProfile(hash);
             updateDate();
         };
 
@@ -198,17 +205,12 @@
         function loadProfile(name) {
             currentUser = name;
             const saved = localStorage.getItem(`focuspath_${name}`);
-            if (saved) {
-                userData = JSON.parse(saved);
-            }
+            if (saved) userData = JSON.parse(saved);
             
-            checkDailyReset();
             renderDashboard();
             
-            document.getElementById('landing-page').classList.remove('active-section');
-            document.getElementById('landing-page').classList.add('hidden-section');
-            document.getElementById('dashboard-page').classList.remove('hidden-section');
-            document.getElementById('dashboard-page').classList.add('active-section');
+            document.getElementById('landing-page').className = 'hidden-section';
+            document.getElementById('dashboard-page').className = 'active-section container mx-auto px-4 py-8 max-w-6xl';
             document.getElementById('display-name').textContent = name;
         }
 
@@ -217,65 +219,49 @@
             location.reload();
         }
 
-        // --- Core Features ---
-        function checkDailyReset() {
-            const today = new Date().toDateString();
-            userData.routine.forEach(item => {
-                if (item.lastReset !== today) {
-                    item.completed = false;
-                    item.lastReset = today;
-                }
-            });
-            saveData();
-        }
-
-        function toggleRoutine(id) {
-            const item = userData.routine.find(r => r.id === id);
-            item.completed = !item.completed;
-            
-            // If completed, add to logs for today
-            if (item.completed) {
-                userData.logs.push({
-                    date: new Date().toISOString().split('T')[0],
-                    hours: item.hours,
-                    subject: item.task
-                });
-            } else {
-                // If unchecked, remove the last entry for this task today
-                const today = new Date().toISOString().split('T')[0];
-                const index = userData.logs.findLastIndex(l => l.date === today && l.subject === item.task);
-                if (index > -1) userData.logs.splice(index, 1);
-            }
-            
-            saveData();
-            renderStats();
-        }
-
+        // --- Feature: Study Logging ---
         function addManualStudy() {
-            const subject = document.getElementById('study-subject').value;
-            const hours = parseFloat(document.getElementById('study-hours').value);
+            const subjectInput = document.getElementById('study-subject');
+            const hoursInput = document.getElementById('study-hours');
             
-            if (!subject || isNaN(hours)) return;
+            const subject = subjectInput.value.trim();
+            const hours = parseFloat(hoursInput.value);
+            
+            if (!subject || isNaN(hours) || hours <= 0) {
+                showNotification('Please enter a valid subject and hours.');
+                return;
+            }
 
-            userData.logs.push({
+            const newLog = {
+                id: Date.now(),
                 date: new Date().toISOString().split('T')[0],
                 hours: hours,
                 subject: subject
-            });
+            };
 
-            document.getElementById('study-subject').value = '';
-            document.getElementById('study-hours').value = '';
-            
+            userData.logs.unshift(newLog); // Add to beginning of array
             saveData();
+            
+            subjectInput.value = '';
+            hoursInput.value = '';
+            
             renderStats();
-            showNotification('Session added!');
+            renderHistory();
+            showNotification(`Logged ${hours}h for ${subject}`);
         }
 
+        function deleteLog(id) {
+            userData.logs = userData.logs.filter(l => l.id !== id);
+            saveData();
+            renderStats();
+            renderHistory();
+        }
+
+        // --- Feature: Exam Countdown ---
         function saveExam() {
             const name = document.getElementById('exam-name').value;
             const date = document.getElementById('exam-date').value;
             if (!name || !date) return;
-
             userData.exam = { name, date };
             saveData();
             renderExam();
@@ -287,151 +273,158 @@
             renderExam();
         }
 
-        // --- Timer Logic ---
-        let timerSeconds = 25 * 60;
+        // --- Timer Logic (Overhauled) ---
+        let timerSeconds = 0;
         let timerInterval = null;
+        let isTimerRunning = false;
+
+        function toggleTimer() {
+            if (isTimerRunning) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            const minInput = parseInt(document.getElementById('timer-min').value) || 0;
+            const secInput = parseInt(document.getElementById('timer-sec').value) || 0;
+
+            if (!isTimerRunning && timerSeconds === 0) {
+                timerSeconds = (minInput * 60) + secInput;
+            }
+
+            if (timerSeconds <= 0) return;
+
+            isTimerRunning = true;
+            document.getElementById('timer-setup').classList.add('opacity-30', 'pointer-events-none');
+            document.getElementById('timer-icon').innerHTML = '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>';
+            
+            timerInterval = setInterval(() => {
+                if (timerSeconds > 0) {
+                    timerSeconds--;
+                    updateTimerDisplay();
+                } else {
+                    stopTimerEffect();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            isTimerRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('timer-icon').innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>';
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timerSeconds = 0;
+            const minInput = parseInt(document.getElementById('timer-min').value) || 0;
+            const secInput = parseInt(document.getElementById('timer-sec').value) || 0;
+            const total = (minInput * 60) + secInput;
+            
+            const mins = Math.floor(total / 60);
+            const secs = total % 60;
+            document.getElementById('timer-display').textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            document.getElementById('timer-setup').classList.remove('opacity-30', 'pointer-events-none');
+        }
 
         function updateTimerDisplay() {
             const mins = Math.floor(timerSeconds / 60);
             const secs = timerSeconds % 60;
-            document.getElementById('timer-display').textContent = 
-                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            document.getElementById('timer-display').textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
-        function toggleTimer() {
-            const btn = document.getElementById('timer-btn');
-            const icon = document.getElementById('timer-icon');
-
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-                icon.innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>';
-            } else {
-                icon.innerHTML = '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>';
-                timerInterval = setInterval(() => {
-                    if (timerSeconds > 0) {
-                        timerSeconds--;
-                        updateTimerDisplay();
-                    } else {
-                        clearInterval(timerInterval);
-                        alert("Time's up! Great focus.");
-                        resetTimer();
-                    }
-                }, 1000);
-            }
-        }
-
-        function resetTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            timerSeconds = 25 * 60;
-            updateTimerDisplay();
-            document.getElementById('timer-icon').innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>';
+        function stopTimerEffect() {
+            pauseTimer();
+            showNotification("Focus session complete!");
+            // Custom alert sound logic could go here
         }
 
         // --- Rendering ---
         function renderDashboard() {
-            renderRoutine();
             renderStats();
+            renderHistory();
             renderExam();
-        }
-
-        function renderRoutine() {
-            const list = document.getElementById('routine-list');
-            list.innerHTML = userData.routine.map(item => `
-                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl transition-all hover:bg-white hover:shadow-sm group">
-                    <div class="flex items-center">
-                        <input type="checkbox" id="task-${item.id}" class="checkbox-custom w-5 h-5 rounded-md border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-4" 
-                               ${item.completed ? 'checked' : ''} onchange="toggleRoutine(${item.id})">
-                        <label for="task-${item.id}" class="text-gray-700 font-medium">${item.task}</label>
-                    </div>
-                    <span class="text-xs font-semibold text-gray-400 group-hover:text-indigo-500 transition-colors">${item.hours} hrs</span>
-                </div>
-            `).join('');
         }
 
         function renderStats() {
             const todayStr = new Date().toISOString().split('T')[0];
-            
-            // Today's hours
-            const todayHours = userData.logs
-                .filter(l => l.date === todayStr)
-                .reduce((acc, curr) => acc + curr.hours, 0);
-            
-            // Total career hours
+            const todayHours = userData.logs.filter(l => l.date === todayStr).reduce((acc, curr) => acc + curr.hours, 0);
             const totalHours = userData.logs.reduce((acc, curr) => acc + curr.hours, 0);
             
-            // Weekly (last 7 days)
             const weekAgo = new Date();
             weekAgo.setDate(weekAgo.getDate() - 7);
-            const weeklyHours = userData.logs
-                .filter(l => new Date(l.date) >= weekAgo)
-                .reduce((acc, curr) => acc + curr.hours, 0);
+            const weeklyHours = userData.logs.filter(l => new Date(l.date) >= weekAgo).reduce((acc, curr) => acc + curr.hours, 0);
 
             document.getElementById('hours-today').textContent = todayHours.toFixed(1);
             document.getElementById('hours-total').textContent = totalHours.toFixed(1);
             document.getElementById('hours-week').textContent = (weeklyHours / 7).toFixed(1);
         }
 
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            if (userData.logs.length === 0) {
+                list.innerHTML = `<p class="text-gray-400 text-center py-8 italic">No sessions logged yet.</p>`;
+                return;
+            }
+
+            list.innerHTML = userData.logs.map(log => `
+                <div class="flex items-center justify-between p-4 bg-gray-50/50 rounded-xl border border-transparent hover:border-indigo-100 hover:bg-white transition-all group">
+                    <div class="flex flex-col">
+                        <span class="font-bold text-gray-800">${log.subject}</span>
+                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">${new Date(log.date).toLocaleDateString()}</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm font-bold text-indigo-600">${log.hours} hrs</span>
+                        <button onclick="deleteLog(${log.id})" class="text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function renderExam() {
             const config = document.getElementById('exam-config');
             const display = document.getElementById('exam-display');
-            
             if (userData.exam.date) {
                 config.classList.add('hidden');
                 display.classList.remove('hidden');
-                
-                const targetDate = new Date(userData.exam.date);
-                const today = new Date();
-                const diffTime = targetDate - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
+                const target = new Date(userData.exam.date);
+                const diff = Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24));
                 document.getElementById('display-exam-name').textContent = userData.exam.name;
-                document.getElementById('days-left').textContent = diffDays > 0 ? diffDays : 0;
-                
-                // Mock target calculation: Total needed / days (random logic for demo)
-                document.getElementById('daily-target').textContent = (diffDays > 0) ? (60 / diffDays).toFixed(1) : "--";
+                document.getElementById('days-left').textContent = diff > 0 ? diff : 0;
+                document.getElementById('daily-target').textContent = diff > 0 ? (30 / diff).toFixed(1) : "--"; // Placeholder calculation
             } else {
                 config.classList.remove('hidden');
                 display.classList.add('hidden');
             }
         }
 
-        // --- Helpers ---
-        function saveData() {
-            localStorage.setItem(`focuspath_${currentUser}`, JSON.stringify(userData));
-        }
-
+        // --- Utils ---
+        function saveData() { localStorage.setItem(`focuspath_${currentUser}`, JSON.stringify(userData)); }
         function updateDate() {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').textContent = new Date().toLocaleDateString(undefined, options);
+            const opt = { weekday: 'long', month: 'short', day: 'numeric' };
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString(undefined, opt);
         }
-
         function playMusic(type) {
-            const player = document.getElementById('audio-player');
-            const sources = {
-                'lofi': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Placeholder for lofi
-                'rain': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', // Placeholder for nature
-                'waves': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' 
+            const p = document.getElementById('audio-player');
+            const src = {
+                'lofi': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+                'rain': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
             };
-            player.src = sources[type];
-            player.play();
-            showNotification(`Playing ${type} sound...`);
+            p.src = src[type]; p.play();
+            showNotification(`Ambient focus: ${type} active`);
         }
-
-        function stopMusic() {
-            document.getElementById('audio-player').pause();
-        }
-
+        function stopMusic() { document.getElementById('audio-player').pause(); }
         function showNotification(msg) {
-            // Simple toast implementation
-            const toast = document.createElement('div');
-            toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm shadow-2xl z-50 animate-bounce';
-            toast.textContent = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
+            const t = document.createElement('div');
+            t.className = 'fixed bottom-8 right-8 bg-gray-900 text-white px-6 py-3 rounded-2xl text-xs font-bold shadow-2xl z-50 animate-bounce';
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2500);
         }
-
     </script>
 </body>
 </html>
